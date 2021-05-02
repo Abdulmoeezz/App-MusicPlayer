@@ -47,20 +47,20 @@ public class MusicForegroundService extends Service implements MediaPlayer.OnPre
     private boolean isPaused = false;
     private boolean shufflePlay;
     private boolean autoPlayNext;
-    private MusicPlayerServiceBinder binder = new MusicPlayerServiceBinder();
-    private LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
+    private final MusicPlayerServiceBinder binder = new MusicPlayerServiceBinder();
+    private final LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
     private RemoteViews notificationLayout;
     private boolean isExternalEventReceiverRegistred = false;
 
-    private Handler progressUpdaterHandler = new Handler();
-    private Runnable trackProgressBarUpdaterRunnable = () -> {
+    private final Handler progressUpdaterHandler = new Handler();
+    private final Runnable trackProgressBarUpdaterRunnable = () -> {
         Intent intent = new Intent(Constants.ACTIVITY_BROADCAST_INTENT_KEY);
         intent.putExtra(Constants.MESSAGE_KEY, Constants.UPDATE_PROGRESS_MSG);
         localBroadcastManager.sendBroadcast(intent);
         progressUpdaterHandler.postDelayed(this.trackProgressBarUpdaterRunnable, UPDATE_TRACK_PROGRESS_BAR_DELAY);
     };
 
-    private BroadcastReceiver buttonClicksReceiver = new BroadcastReceiver()
+    private final BroadcastReceiver buttonClicksReceiver = new BroadcastReceiver()
     {
         @Override
         public void onReceive(Context context, Intent intent)
@@ -91,7 +91,7 @@ public class MusicForegroundService extends Service implements MediaPlayer.OnPre
         }
     };
 
-    private BroadcastReceiver externalEventReceiver = new BroadcastReceiver()
+    private final BroadcastReceiver externalEventReceiver = new BroadcastReceiver()
     {
         @Override
         public void onReceive(Context context, Intent intent)
@@ -218,17 +218,14 @@ public class MusicForegroundService extends Service implements MediaPlayer.OnPre
 
         notificationLayout.setImageViewResource(R.id.ib_notification_play_pause, playPauseResId);
 
-        Notification notification =
-                new NotificationCompat.Builder(this, MusicApp.NOTIFICATION_CHANNEL_ID)
-                        .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                        .setContentTitle(Constants.NOTIFICATION_TITLE)
-                        .setSmallIcon(R.drawable.baseline_audiotrack_black_18)
-                        .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
-                        .setCustomContentView(notificationLayout)
-                        .setContentIntent(pendingIntent)
-                        .build();
-
-        return notification;
+        return new NotificationCompat.Builder(this, MusicApp.NOTIFICATION_CHANNEL_ID)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setContentTitle(Constants.NOTIFICATION_TITLE)
+                .setSmallIcon(R.drawable.baseline_audiotrack_black_18)
+                .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
+                .setCustomContentView(notificationLayout)
+                .setContentIntent(pendingIntent)
+                .build();
     }
 
     private void updateNotification(int playPauseResId)
@@ -244,7 +241,7 @@ public class MusicForegroundService extends Service implements MediaPlayer.OnPre
         if(currentTrack != null && (isPlaying || isPaused))
         {
             int currentPosition = player.getCurrentPosition();
-            int rewoundPosition = currentPosition - Constants.REWIND_TRACK_BY_MILLISECONDS > 0 ? currentPosition - Constants.REWIND_TRACK_BY_MILLISECONDS : 0;
+            int rewoundPosition = Math.max(currentPosition - Constants.REWIND_TRACK_BY_MILLISECONDS, 0);
             player.seekTo(rewoundPosition);
         }
     }
@@ -285,7 +282,7 @@ public class MusicForegroundService extends Service implements MediaPlayer.OnPre
         {
             int duration = player.getDuration();
             int currentPosition = player.getCurrentPosition();
-            int forwardedPosition = Constants.FORWARD_TRACK_BY_MILLISECONDS + currentPosition < duration ? Constants.FORWARD_TRACK_BY_MILLISECONDS + currentPosition : duration;
+            int forwardedPosition = Math.min(Constants.FORWARD_TRACK_BY_MILLISECONDS + currentPosition, duration);
             player.seekTo(forwardedPosition);
         }
     }
@@ -293,12 +290,18 @@ public class MusicForegroundService extends Service implements MediaPlayer.OnPre
     public void playTrack(Track track)
     {
         currentTrack = track;
-        Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, track.getId());
+      //  Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, track.getId());
+        Uri uri = Uri.parse("android.resource://" + getPackageName() + "/" + track.getSongRawFile());
+
         try
-        {
-            player.setDataSource(this, uri);
-            player.prepareAsync();
-            updateNotification(R.drawable.baseline_pause_black_36);
+        { player.setDataSource(this, uri);
+           //player.setDataSource(this,track.getSongRawFile());
+          //  player.create(this,track.getSongRawFile());
+
+           player.prepare();
+           //  player.start();
+
+        updateNotification(R.drawable.baseline_pause_black_36);
         } catch (IOException e)
         {
             Toast.makeText(this, R.string.track_playback_error, Toast.LENGTH_SHORT).show();
@@ -385,8 +388,7 @@ public class MusicForegroundService extends Service implements MediaPlayer.OnPre
             {
                 int trackIndex = trackList.indexOf(currentTrack);
                 int nextTrackIndex = (trackIndex + 1) % trackList.size();
-                Track nextTrack = trackList.get(nextTrackIndex);
-                currentTrack = nextTrack;
+                currentTrack = trackList.get(nextTrackIndex);
                 Intent intent = new Intent(Constants.ACTIVITY_BROADCAST_INTENT_KEY);
                 intent.putExtra(Constants.MESSAGE_KEY, Constants.COMPLETION_MSG);
                 intent.putExtra(Constants.CURRENT_TRACK_KEY, baseList.indexOf(currentTrack));

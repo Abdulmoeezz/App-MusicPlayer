@@ -1,6 +1,7 @@
 package pl.pisquared.musicplayer;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -62,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements TrackListAdapter.
     private MusicForegroundService musicService;
     private boolean musicServiceBounded = false;
 
-    private BroadcastReceiver messageReceiver = new BroadcastReceiver()
+    private final BroadcastReceiver messageReceiver = new BroadcastReceiver()
     {
         @Override
         public void onReceive(Context context, Intent intent)
@@ -97,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements TrackListAdapter.
         }
     };
 
-    private ServiceConnection musicConnection = new ServiceConnection()
+    private final ServiceConnection musicConnection = new ServiceConnection()
     {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service)
@@ -153,18 +154,11 @@ public class MainActivity extends AppCompatActivity implements TrackListAdapter.
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
     {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch(requestCode)
-        {
-            case PERMISSION_READ_EXTERNAL_STORAGE_REQUEST_CODE:
-            {
-                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                {
-                    performInits();
-                }
-                else
-                {
-                    Toast.makeText(this, PERMISSION_DENIED_MSG, Toast.LENGTH_LONG).show();
-                }
+        if (requestCode == PERMISSION_READ_EXTERNAL_STORAGE_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                performInits();
+            } else {
+                Toast.makeText(this, PERMISSION_DENIED_MSG, Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -280,6 +274,7 @@ public class MainActivity extends AppCompatActivity implements TrackListAdapter.
         }
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v)
     {
@@ -507,6 +502,7 @@ public class MainActivity extends AppCompatActivity implements TrackListAdapter.
         return true;
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
@@ -526,8 +522,8 @@ public class MainActivity extends AppCompatActivity implements TrackListAdapter.
 
     private void aboutAuthorOptionSelected()
     {
-        Intent startAboutAuthorActivity = new Intent(this, AboutAuthorActivity.class);
-        startActivity(startAboutAuthorActivity);
+       // Intent startAboutAuthorActivity = new Intent(this, AboutAuthorActivity.class);
+     //   startActivity(startAboutAuthorActivity);
     }
 
     private void settingsOptionSelected()

@@ -21,7 +21,8 @@
         app:layout_constraintEnd_toStartOf="@+id/tv_track_duration"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:ignore="HardcodedText" />
 
     <TextView
         android:id="@+id/tv_track_author"
@@ -38,7 +39,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/tv_track_duration"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_track_title" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_track_title"
+        tools:ignore="HardcodedText" />
 
     <TextView
         android:id="@+id/tv_track_duration"
@@ -52,7 +54,8 @@
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/ib_track_play_pause"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="HardcodedText" />
 
     <ImageButton
         android:id="@+id/ib_track_play_pause"
@@ -64,6 +67,7 @@
         android:background="@drawable/baseline_play_arrow_white_36"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription" />
 
 </android.support.constraint.ConstraintLayout>

@@ -4,7 +4,8 @@
     <item
         android:id="@+id/about_author"
         android:title="@string/activity_main_menu_about_author"
-        app:showAsAction="never"/>
+        app:showAsAction="never"
+        android:visible="false"/>
 
     <item
         android:id="@+id/settings"

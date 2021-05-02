@@ -23,12 +23,12 @@ public class TrackListAdapter extends RecyclerView.Adapter<TrackListAdapter.View
 {
     private static final String TAG = TrackListAdapter.class.getSimpleName();
     private static final String UNKNOWN_AUTHOR = "Unknown";
-    private static final int GREEN_ACCENT_LIGHTER_COLOR = 0xff80cbc4;
+    private static final int GREEN_ACCENT_LIGHTER_COLOR = 0xffffffff;
     private static final int GREEN_ACCENT_DARKER_COLOR = 0xff009688;
-    private static final int BROWN_LIGHTER_BACKGROUND_COLOR = 0xff784F40;
-    private List<Track> tracks;
-    private OnTrackListItemClickListener onTrackListItemClickListener;
-    private MusicPlayer musicPlayer;
+    private static final int BROWN_LIGHTER_BACKGROUND_COLOR = 0xffD3D3D3;
+    private final List<Track> tracks;
+    private final OnTrackListItemClickListener onTrackListItemClickListener;
+    private final MusicPlayer musicPlayer;
 
     public TrackListAdapter(List<Track> tracks, OnTrackListItemClickListener onTrackListItemClickListener, MusicPlayer musicPlayer)
     {
@@ -116,10 +116,10 @@ public class TrackListAdapter extends RecyclerView.Adapter<TrackListAdapter.View
 
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
     {
-        private TextView tvTitle;
-        private TextView tvAuthor;
-        private TextView tvDuration;
-        private ImageButton ibPlayPauseTrack;
+        private final TextView tvTitle;
+        private final TextView tvAuthor;
+        private final TextView tvDuration;
+        private final ImageButton ibPlayPauseTrack;
 
         private ViewHolder(View itemView)
         {
